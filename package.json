@@ -1,0 +1,33 @@
+{
+  "author": "Ben Newman <bn@cs.stanford.edu>",
+  "name": "ast-path",
+  "description": "Library for traversing syntax trees with easy access to an unbroken chain of parent references",
+  "keywords": [
+    "ast",
+    "abstract syntax tree",
+    "trees",
+    "hierarchy",
+    "transformation",
+    "traversal"
+  ],
+  "version": "0.1.0",
+  "homepage": "http://github.com/benjamn/ast-path",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/benjamn/ast-path.git"
+  },
+  "main": "main.js",
+  "scripts": {
+    "test": "mocha --reporter spec test/tests.js"
+  },
+  "dependencies": {
+    "private": "~0.0.5"
+  },
+  "devDependencies": {},
+  "optionalDependencies": {
+    "mocha": "~1.13.0"
+  },
+  "engines": {
+    "node": ">= 0.6"
+  }
+}
