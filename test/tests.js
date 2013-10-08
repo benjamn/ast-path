@@ -28,3 +28,80 @@ describe("Path", function() {
     }), [1, 3, 5]);
   });
 });
+
+describe("replace method", function() {
+  it("should work with single replacements", function() {
+    var path = new Path({
+      foo: 42
+    });
+
+    var foo = path.get("foo");
+    assert.strictEqual(foo.value, 42);
+
+    var newFoo = foo.replace("asdf");
+    assert.strictEqual(path.get("foo"), newFoo);
+    assert.notStrictEqual(path.get("foo"), foo);
+    assert.strictEqual(newFoo.value, "asdf");
+    assert.strictEqual(newFoo.name, "foo");
+  });
+
+  it("should work at the root", function() {
+    assert.deepEqual(new Path(1).replace(0, 2).map(function(path) {
+      return path.value;
+    }), [0, 2]);
+  });
+
+  it("should work with arrays", function() {
+    var array = [1, 2, 3];
+    var path = new Path(array);
+    var second = path.get(1);
+    var third = path.get(2);
+
+    second.replace("a", "b", "c");
+
+    assert.strictEqual(third.name, 4);
+    assert.strictEqual(third.value, 3);
+    assert.strictEqual(third, path.get(4));
+    assert.strictEqual(array.length, 5);
+    assert.deepEqual(array, [1, "a", "b", "c", 3]);
+    assert.strictEqual(path.get(1).value, "a");
+    assert.strictEqual(path.get(2).value, "b");
+    assert.strictEqual(path.get(3).value, "c");
+    assert.deepEqual(path.get(2).replace(), []);
+    assert.deepEqual(array, [1, "a", "c", 3]);
+
+    path = new Path([1, 2, 3, 4, 5]);
+
+    path.get(0).replace();
+    assert.deepEqual(path.value, [2, 3, 4, 5]);
+
+    path.get(2).replace();
+    assert.deepEqual(path.value, [2, 3, 5]);
+
+    path.get(1).replace();
+    assert.deepEqual(path.value, [2, 5]);
+
+    path.get(1).replace();
+    assert.deepEqual(path.value, [2]);
+
+    path.get(0).replace();
+    assert.deepEqual(path.value, []);
+
+    path.get(0).replace(1, 2, 3);
+    assert.deepEqual(path.value, [1, 2, 3]);
+
+    path.get(10).replace(4, 5);
+    assert.deepEqual(path.value, [1, 2, 3, 4, 5]);
+  });
+
+  var desc = "should support multiple replacements only for array elements";
+  it(desc, function() {
+    assert.throws(function() {
+      new Path({ foo: 42 }).get("foo").replace(2, 3);
+    });
+
+    assert.throws(function() {
+      new Path({ foo: 42 }).get("foo").replace();
+    });
+  });
+});
