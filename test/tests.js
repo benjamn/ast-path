@@ -38,17 +38,17 @@ describe("replace method", function() {
     var foo = path.get("foo");
     assert.strictEqual(foo.value, 42);
 
-    var newFoo = foo.replace("asdf");
-    assert.strictEqual(path.get("foo"), newFoo);
+    foo.replace("asdf");
+    var newFoo = path.get("foo");
     assert.notStrictEqual(path.get("foo"), foo);
     assert.strictEqual(newFoo.value, "asdf");
     assert.strictEqual(newFoo.name, "foo");
   });
 
-  it("should work at the root", function() {
-    assert.deepEqual(new Path(1).replace(0, 2).map(function(path) {
-      return path.value;
-    }), [0, 2]);
+  it("should fail at the root", function() {
+    assert.throws(function() {
+      new Path(1).replace();
+    }, assert.AssertionError);
   });
 
   it("should work with arrays", function() {
@@ -67,7 +67,8 @@ describe("replace method", function() {
     assert.strictEqual(path.get(1).value, "a");
     assert.strictEqual(path.get(2).value, "b");
     assert.strictEqual(path.get(3).value, "c");
-    assert.deepEqual(path.get(2).replace(), []);
+
+    path.get(2).replace();
     assert.deepEqual(array, [1, "a", "c", 3]);
 
     path = new Path([1, 2, 3, 4, 5]);
