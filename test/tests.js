@@ -101,8 +101,9 @@ describe("replace method", function() {
       new Path({ foo: 42 }).get("foo").replace(2, 3);
     });
 
-    assert.throws(function() {
-      new Path({ foo: 42 }).get("foo").replace();
-    });
+    var path = new Path({ foo: 42 });
+    assert.strictEqual("foo" in path.value, true);
+    path.get("foo").replace();
+    assert.strictEqual("foo" in path.value, false);
   });
 });
