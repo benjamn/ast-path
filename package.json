@@ -10,7 +10,7 @@
     "transformation",
     "traversal"
   ],
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "http://github.com/benjamn/ast-path",
   "repository": {
     "type": "git",
