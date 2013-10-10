@@ -106,6 +106,42 @@ describe("replace method", function() {
     path.get("foo").replace();
     assert.strictEqual("foo" in path.value, false);
   });
+
+  it("should return an array of new paths", function() {
+    var path = new Path({ foo: 42 });
+
+    var newPaths = path.get("foo").replace(43);
+    assert.strictEqual(newPaths.length, 1);
+    assert.strictEqual(newPaths[0].value, 43);
+    assert.strictEqual(newPaths[0].parentPath, path);
+    assert.deepEqual(path.value, { foo: 43 });
+
+    newPaths = path.get("foo").replace();
+    assert.deepEqual(newPaths, []);
+    assert.deepEqual(path.value, {});
+
+    newPaths = path.get("foo").replace(44);
+    assert.strictEqual(newPaths.length, 1);
+    assert.strictEqual(newPaths[0].value, 44);
+    assert.strictEqual(newPaths[0].parentPath, path);
+    assert.deepEqual(path.value, { foo: 44 });
+
+    path = new Path({ list: [2, 4, 6, 8] });
+    var four = path.get("list", 1);
+    assert.strictEqual(four.value, 4);
+    newPaths = four.replace(3, 4, 5);
+    assert.deepEqual(path.value.list, [2, 3, 4, 5, 6, 8]);
+    assert.deepEqual(newPaths.map(function(newPath) {
+      assert.strictEqual(newPath.parentPath, four.parentPath);
+      return newPath.value;
+    }), [3, 4, 5]);
+
+    var list = path.get("list");
+    assert.deepEqual(list.map(function(childPath) {
+      assert.strictEqual(list.value[childPath.name], childPath.value);
+      return childPath.value;
+    }), list.value);
+  });
 });
 
 describe("Path iteration methods", function() {
