@@ -107,3 +107,71 @@ describe("replace method", function() {
     assert.strictEqual("foo" in path.value, false);
   });
 });
+
+describe("Path iteration methods", function() {
+  it("should skip holes", function() {
+    var path = new Path([1,,3,,5]);
+    var values = [];
+    path.each(function(childPath) {
+      values.push(childPath.value);
+    });
+    assert.deepEqual(values, [1, 3, 5]);
+  });
+
+  it("each should be aware of .replace", function() {
+    var path = new Path([1, 2, "x", 5, 6]);
+    var values = [];
+
+    path.each(function(childPath) {
+      values.push(childPath.value);
+    });
+
+    assert.deepEqual(values, path.value);
+    values.length = 0;
+
+    path.each(function(childPath) {
+      if (childPath.value === "x") {
+        childPath.replace(3, 4);
+      } else {
+        values.push(childPath.value);
+      }
+    });
+
+    assert.deepEqual(values, [1, 2, 5, 6]);
+    assert.deepEqual(path.value, [1, 2, 3, 4, 5, 6]);
+  });
+
+  it("map should be aware of .replace", function() {
+    var path = new Path([1, 2, "x", 5, 6]);
+
+    var values = path.map(function(childPath) {
+      if (childPath.name === 0) {
+        path.get(3).replace("y", "z");
+      } else if (childPath.name === 2) {
+        childPath.replace();
+      }
+      return childPath.value;
+    });
+
+    assert.deepEqual(values, [1, 2, "x", 5, 6]);
+    assert.deepEqual(path.value, [1, 2, "y", "z", 6]);
+  });
+
+  it("filter should be aware of .replace", function() {
+    var path = new Path([1, 2, "x", 5, 6]);
+
+    var values = path.filter(function(childPath) {
+      if (childPath.name === 0) {
+        path.get(3).replace("y", "z");
+      } else if (childPath.name === 2) {
+        childPath.replace();
+      }
+      return typeof childPath.value === "number";
+    }).map(function(childPath) {
+      return childPath.value;
+    });
+
+    assert.deepEqual(values, [1, 2, 5, 6]);
+    assert.deepEqual(path.value, [1, 2, "y", "z", 6]);
+  });
+});
