@@ -21,11 +21,11 @@
     "test": "mocha --reporter spec test/tests.js"
   },
   "dependencies": {
-    "private": "~0.0.5"
+    "private": "~0.1.7"
   },
   "devDependencies": {},
   "optionalDependencies": {
-    "mocha": "~1.13.0"
+    "mocha": "~3.2.0"
   },
   "engines": {
     "node": ">= 0.6"
